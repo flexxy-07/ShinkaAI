@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shinkaai/pages/chat_page.dart';
 import 'package:shinkaai/pages/home_page.dart';
 import 'package:shinkaai/theme/colors.dart';
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           ThemeData.dark().textTheme
          )
       ),
-      home: const HomePage()
+      home: HomePage()
     );
   }
 

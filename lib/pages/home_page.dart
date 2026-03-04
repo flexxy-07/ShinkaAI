@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shinkaai/services/chat_web_service.dart';
 import 'package:shinkaai/theme/colors.dart';
 import 'package:shinkaai/widgets/search_section.dart';
 import 'package:shinkaai/widgets/sidebar.dart';
@@ -11,8 +12,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    ChatWebService().connect();
+  }
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: Row(
         children: [
