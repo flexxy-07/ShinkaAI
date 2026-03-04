@@ -32,6 +32,7 @@ class _SideBarState extends State<SideBar> {
                   size: 30,
                 ),
               ),
+              const SizedBox(width: 8),
               if(!isCollapsed)
               Text(
                 "ShinkaAI",
