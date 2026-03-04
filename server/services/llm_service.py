@@ -25,5 +25,7 @@ class LLMService:
         Please provide a comprehensive, detailed, well-cited response using the above context. Think and reason deeply. Ensure it answers the query the user is asking. Do not use your knowledge until absolutely necessary.
         """
         
-        response = self.model.generate_content(full_prompt)
-        return response.text
+        response = self.model.generate_content(full_prompt, stream=True)
+        
+        for chunk in response:
+            yield chunk.text
