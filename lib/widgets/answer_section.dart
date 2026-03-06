@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:shinkaai/services/chat_web_service.dart';
+import 'package:shinkaai/theme/colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class AnswerSection extends StatefulWidget {
@@ -50,15 +51,93 @@ The **masseter muscle** is considered the strongest muscle in the human body.
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'ShinkaAI',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.submitButton.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.auto_awesome_mosaic,
+                color: AppColors.submitButton,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'ShinkaAI',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.whiteColor,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        Skeletonizer(enabled: isLoading,child: Markdown(data: fullResponse, shrinkWrap: true)),
+        SizedBox(height: isMobile ? 12 : 16),
+        Container(
+          padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
+          decoration: BoxDecoration(
+            color: AppColors.cardColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.searchBarBorder.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: Markdown(
+              data: fullResponse,
+              shrinkWrap: true,
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(
+                  fontSize: isMobile ? 14 : 15,
+                  height: 1.6,
+                  color: AppColors.whiteColor.withOpacity(0.9),
+                ),
+                h1: TextStyle(
+                  fontSize: isMobile ? 22 : 26,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.whiteColor,
+                  height: 1.3,
+                ),
+                h2: TextStyle(
+                  fontSize: isMobile ? 20 : 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.whiteColor,
+                  height: 1.3,
+                ),
+                h3: TextStyle(
+                  fontSize: isMobile ? 18 : 20,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.whiteColor,
+                  height: 1.3,
+                ),
+                listBullet: const TextStyle(
+                  color: AppColors.submitButton,
+                ),
+                code: TextStyle(
+                  backgroundColor: AppColors.background,
+                  color: AppColors.submitButton,
+                  fontSize: isMobile ? 13 : 14,
+                ),
+                codeblockDecoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

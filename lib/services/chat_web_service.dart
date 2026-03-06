@@ -13,8 +13,8 @@ class ChatWebService {
 
   // privatized the constructor to prevent multiple instances
   ChatWebService.internal();
-  final _searchResultController = StreamController<Map<String, dynamic>>();
-  final _contentController = StreamController<Map<String, dynamic>>();
+  final _searchResultController = StreamController<Map<String, dynamic>>.broadcast();
+  final _contentController = StreamController<Map<String, dynamic>>.broadcast();
 
   
   Stream<Map<String, dynamic>> get searchResultsStream => _searchResultController.stream;
@@ -22,7 +22,7 @@ class ChatWebService {
 
   void connect() {
     // establish WebSocket connection
-    _socket = WebSocket(Uri.parse('ws://localhost:8000/ws/chat'));
+    _socket = WebSocket(Uri.parse('ws://192.168.1.15:8000/ws/chat'));
 
     _socket!.messages.listen((message){
       final data = json.decode(message);

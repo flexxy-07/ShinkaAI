@@ -12,62 +12,105 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     ChatWebService().connect();
   }
+
   @override
   Widget build(BuildContext context) {
-    
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: isMobile
+          ? AppBar(
+              backgroundColor: AppColors.sideNav,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.menu, color: AppColors.whiteColor),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
+              title: Row(
+                children: [
+                  const Icon(
+                    Icons.auto_awesome_mosaic,
+                    color: AppColors.whiteColor,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    "ShinkaAI",
+                    style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : null,
+      drawer: isMobile
+          ? Drawer(
+              backgroundColor: AppColors.sideNav,
+              child: const SideBar(isMobile: true),
+            )
+          : null,
       body: Row(
         children: [
-          // side bar
-          SideBar(), // COls :
+          if (!isMobile)
+            SideBar(isMobile: false),
           Expanded(
             child: Column(
               children: [
                 Expanded(child: SearchSection()),
                 Container(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 8.0 : 16.0,
+                    vertical: isMobile ? 12.0 : 16.0,
+                  ),
                   child: Wrap(
                     alignment: WrapAlignment.center,
+                    spacing: isMobile ? 8 : 12,
+                    runSpacing: isMobile ? 8 : 0,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Pro', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Enterprise', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Store', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Blog', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Careers', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('English', style: TextStyle(fontSize: 14, color: AppColors.footerGrey)),
-                      ),
+                      _FooterLink(text: 'Pro'),
+                      _FooterLink(text: 'Enterprise'),
+                      _FooterLink(text: 'Store'),
+                      _FooterLink(text: 'Blog'),
+                      _FooterLink(text: 'Careers'),
+                      _FooterLink(text: 'English'),
                     ],
                   ),
-                ), // footer
-                //search section
-                // footer
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FooterLink extends StatelessWidget {
+  final String text;
+
+  const _FooterLink({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 13, color: AppColors.footerGrey),
       ),
     );
   }

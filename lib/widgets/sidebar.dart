@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shinkaai/theme/colors.dart';
 
 class SideBar extends StatefulWidget {
-  const SideBar({super.key});
+  const SideBar({super.key, required this.isMobile});
+  final bool isMobile;
 
   @override
   State<SideBar> createState() => _SideBarState();
@@ -10,157 +11,185 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   bool isCollapsed = true;
+
   @override
   Widget build(BuildContext context) {
+    // On mobile, always show expanded view in drawer
+    final shouldShowExpanded = widget.isMobile ? true : !isCollapsed;
+    final sidebarWidth = widget.isMobile
+        ? MediaQuery.of(context).size.width * 0.75
+        : (isCollapsed ? 64.0 : 220.0);
+
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
-      width: isCollapsed ? 64 : 128,
+      duration: const Duration(milliseconds: 200),
+      width: sidebarWidth,
       height: double.infinity,
-      color: const Color.fromRGBO(32, 34, 34, 1),
+      color: AppColors.sideNav,
       child: Column(
-        crossAxisAlignment: isCollapsed ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            shouldShowExpanded ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                child: Icon(
-                  Icons.auto_awesome_mosaic,
-                  color: AppColors.whiteColor,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(width: 8),
-              if(!isCollapsed)
-              Text(
-                "ShinkaAI",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold
-                ),
-              )
-
-            ],
+          SizedBox(height: widget.isMobile ? 8 : 20),
+          _buildHeader(shouldShowExpanded),
+          SizedBox(height: widget.isMobile ? 16 : 24),
+          _buildMenuItem(
+            icon: Icons.add,
+            text: "New Chat",
+            showText: shouldShowExpanded,
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Icon(Icons.add, color: AppColors.iconGrey, size: 20),
-              ),
-
-              if(!isCollapsed)
-              Text(
-                "New Chat",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              )
-            ],
+          _buildMenuItem(
+            icon: Icons.search,
+            text: "Search",
+            showText: shouldShowExpanded,
           ),
-          Row(
-              mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Icon(Icons.search, color: AppColors.iconGrey, size: 20),
-              ),
-              if(!isCollapsed)
-              Text(
-                "Search",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              )
-            ],
+          _buildMenuItem(
+            icon: Icons.language,
+            text: "Language",
+            showText: shouldShowExpanded,
           ),
-
-          Row(
-              mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Icon(Icons.language, color: AppColors.iconGrey, size: 20),
-              ),
-              if(!isCollapsed)
-              Text(
-                "Language",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              )
-            ],
+          _buildMenuItem(
+            icon: Icons.auto_awesome,
+            text: "Settings",
+            showText: shouldShowExpanded,
           ),
-          Row(
-              mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8  ),
-                child: Icon(
-                  Icons.auto_awesome,
-                  color: AppColors.iconGrey,
-                  size: 20,
-                ),
-              ),
-              if(!isCollapsed)
-              Text(
-                "Settings",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              )
-            ],
+          _buildMenuItem(
+            icon: Icons.cloud_outlined,
+            text: "Cloud",
+            showText: shouldShowExpanded,
           ),
-
-          Row(
-              mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Icon(
-                  Icons.cloud_outlined,
-                  color: AppColors.iconGrey,
-                  size: 20,
-                ),
-              ),
-              if(!isCollapsed)
-              Text(
-                "Cloud",
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              )
-            ],
-          ),
-
           const Spacer(),
-          GestureDetector(
-            onTap: (){
-              setState(() {
-                isCollapsed = !isCollapsed;
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-              child: Icon(
-                isCollapsed? Icons.keyboard_arrow_right : Icons.keyboard_arrow_left,
-                color: AppColors.iconGrey,
-                size: 20,
-              ),
+          if (!widget.isMobile) _buildCollapseButton(shouldShowExpanded),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(bool showText) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: showText ? 16 : 0,
+        vertical: 12,
+      ),
+      child: Row(
+        mainAxisAlignment:
+            showText ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.submitButton.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.auto_awesome_mosaic,
+              color: AppColors.submitButton,
+              size: 24,
             ),
           ),
-          const SizedBox(height: 20),  
+          if (showText) ...[
+            const SizedBox(width: 12),
+            const Text(
+              "ShinkaAI",
+              style: TextStyle(
+                color: AppColors.whiteColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ]
         ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String text,
+    required bool showText,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: showText ? 12 : 0,
+        vertical: 4,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: showText ? 12 : 8,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: showText
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: AppColors.iconGrey, size: 22),
+                if (showText) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ]
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCollapseButton(bool showText) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              isCollapsed = !isCollapsed;
+            });
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              mainAxisAlignment: showText
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isCollapsed
+                      ? Icons.keyboard_arrow_right
+                      : Icons.keyboard_arrow_left,
+                  color: AppColors.iconGrey,
+                  size: 22,
+                ),
+                if (showText) ...[
+                  const SizedBox(width: 12),
+                  const Text(
+                    "Collapse",
+                    style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ]
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
