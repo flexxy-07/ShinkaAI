@@ -8,9 +8,19 @@ from services.search_service import SearchService
 
 app = FastAPI()
 
-search_service = SearchService()  
-sort_source_service = SortSourceService()
-llm_service = LLMService()
+search_service = None  
+sort_source_service = None
+llm_service = None
+
+def get_services():
+        global search_service, sort_source_service, llm_service
+        if search_service is None:
+                search_service = SearchService()
+        if sort_source_service is None:
+                sort_source_service = SortSourceService()
+        if llm_service is None:
+                llm_service = LLMService()
+        return search_service, sort_source_service, llm_service
 
 # web sockets
 @app.websocket('/ws/chat')
@@ -27,9 +37,12 @@ async def websocket_chat_endpoint(websocket : WebSocket):
                         print(f'Data received from client: {data}✅')
                         query = data.get('query')
                         print('Attempting to search the web for query:')
-                        search_results = search_service.web_search(query)
+                        
+                        s_service, sort_service, l_service = get_services()
+                        
+                        search_results = s_service.web_search(query)
                         print(f'Search results obtained✅')
-                        sorted_results = sort_source_service.sort_sources(query, search_results)
+                        sorted_results = sort_service.sort_sources(query, search_results)
                         print(f'Search results sorted✅')
                         # sending intermediate response to the client
                         await asyncio.sleep(0.1)
@@ -38,7 +51,7 @@ async def websocket_chat_endpoint(websocket : WebSocket):
                                 'data' : sorted_results
                         })
                         print(f'Intermediate response sent to client✅')
-                        for chunk in llm_service.generate_response(query, sorted_results):
+                        for chunk in l_service.generate_response(query, sorted_results):
                                 await asyncio.sleep(0.1)
                                 await websocket.send_json({
                                         'type' : 'content',
@@ -54,12 +67,13 @@ async def websocket_chat_endpoint(websocket : WebSocket):
 
 @app.post("/chat")
 def chat_endpoint(body : ChatBody):
+    s_service, sort_service, l_service = get_services()
     # Steps -> 1. Get the query from the body
     #          2. Search the web and find appropriate results
-    search_results = search_service.web_search(body.query)
+    search_results = s_service.web_search(body.query)
             #  3. Sort the responses on the basis of relevance
-    sorted_results = sort_source_service.sort_sources(body.query, search_results)
+    sorted_results = sort_service.sort_sources(body.query, search_results)
               # 4. Generate the response using LLM(In out Case Gemini)
-    response = llm_service.generate_response(body.query, sorted_results)
+    response = l_service.generate_response(body.query, sorted_results)
     print(response)
     return response
