@@ -20,29 +20,30 @@ async def websocket_chat_endpoint(websocket : WebSocket):
         print('Websocket connection accepted ✅✅✅')
         
         try:
-                await asyncio.sleep(0.1)
-                print('Waiting for data from client...')
-                data = await websocket.receive_json()
-                print(f'Data received from client: {data}✅')
-                query = data.get('query')
-                print('Attempting to search the web for query:')
-                search_results = search_service.web_search(query)
-                print(f'Search results obtained✅')
-                sorted_results = sort_source_service.sort_sources(query, search_results)
-                print(f'Search results sorted✅')
-                # sending intermediate response to the client
-                await asyncio.sleep(0.1)
-                await websocket.send_json({
-                        'type' : 'search_results',
-                        'data' : sorted_results
-                })
-                print(f'Intermediate response sent to client✅')
-                for chunk in llm_service.generate_response(query, sorted_results):
+                while True:
+                        await asyncio.sleep(0.1)
+                        print('Waiting for data from client...')
+                        data = await websocket.receive_json()
+                        print(f'Data received from client: {data}✅')
+                        query = data.get('query')
+                        print('Attempting to search the web for query:')
+                        search_results = search_service.web_search(query)
+                        print(f'Search results obtained✅')
+                        sorted_results = sort_source_service.sort_sources(query, search_results)
+                        print(f'Search results sorted✅')
+                        # sending intermediate response to the client
                         await asyncio.sleep(0.1)
                         await websocket.send_json({
-                                'type' : 'content',
-                                'data' : chunk
+                                'type' : 'search_results',
+                                'data' : sorted_results
                         })
+                        print(f'Intermediate response sent to client✅')
+                        for chunk in llm_service.generate_response(query, sorted_results):
+                                await asyncio.sleep(0.1)
+                                await websocket.send_json({
+                                        'type' : 'content',
+                                        'data' : chunk
+                                })
         except Exception as e:
                 print(f'Unexpected error in websocket connection: {e}')
         finally:
