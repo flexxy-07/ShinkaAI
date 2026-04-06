@@ -22,9 +22,8 @@ class ChatWebService {
 
   void connect() {
     // establish WebSocket connection
-    // Note: Replaced previous hardcoded IP (192.168.1.15) with your actual machine's IP (10.21.165.72).
-    // If you are using an Android Emulator, you can use '10.0.2.2' instead.
-    _socket = WebSocket(Uri.parse('ws://10.21.165.72:8000/ws/chat'));
+    // Connecting to the deployed Render backend WS endpoint
+    _socket = WebSocket(Uri.parse('wss://shinkaai-backend.onrender.com/ws/chat'));
 
     _socket!.messages.listen((message) {
       final data = json.decode(message);

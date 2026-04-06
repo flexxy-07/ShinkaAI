@@ -1,6 +1,7 @@
 import asyncio
 
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import StreamingResponse
 from pydantic_models.chat_body import ChatBody
 
 app = FastAPI()
@@ -74,6 +75,5 @@ def chat_endpoint(body : ChatBody):
             #  3. Sort the responses on the basis of relevance
     sorted_results = sort_service.sort_sources(body.query, search_results)
               # 4. Generate the response using LLM(In out Case Gemini)
-    response = l_service.generate_response(body.query, sorted_results)
-    print(response)
-    return response
+    response_generator = l_service.generate_response(body.query, sorted_results)
+    return StreamingResponse(response_generator, media_type="text/plain")
