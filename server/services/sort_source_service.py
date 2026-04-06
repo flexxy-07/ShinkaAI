@@ -12,7 +12,7 @@ class SortSourceService:
     def get_embedding(self, text: str):
         try:
             response = self.client.models.embed_content(
-                model="text-embedding-004",
+                model="gemini-embedding-001",
                 contents=text
             )
             return np.array(response.embeddings[0].values)
