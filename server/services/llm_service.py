@@ -34,5 +34,7 @@ Please provide a comprehensive, detailed, well-cited response using the above co
             yield response.text
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             print("LLM Error:", str(e))
-            yield "Something went wrong while generating response."
+            yield f"Something went wrong while generating response. Error details: {str(e)}"
