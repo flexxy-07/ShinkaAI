@@ -10,3 +10,4 @@ trafilatura==2.0.0
 uvicorn==0.41.0
 websockets==16.0
 google-generativeai==0.8.6
+lxml_html_clean==0.4.4
