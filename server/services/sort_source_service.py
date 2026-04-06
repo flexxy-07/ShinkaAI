@@ -12,7 +12,7 @@ class SortSourceService:
         relevance_scores = []
 
         query_embedding_response = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/embedding-001",
             content=query
         )
         query_embedding = query_embedding_response['embedding']
@@ -25,7 +25,7 @@ class SortSourceService:
 
             # We pass the slice to avoid hitting length limits if content is huge
             res_embedding_response = genai.embed_content(
-                 model="models/text-embedding-004",
+                 model="models/embedding-001",
                  content=content[:10000]
             )
             res_embedding = res_embedding_response['embedding']
