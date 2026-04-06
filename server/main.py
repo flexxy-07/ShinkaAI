@@ -1,6 +1,7 @@
 import asyncio
+import traceback
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic_models.chat_body import ChatBody
 
@@ -68,12 +69,17 @@ async def websocket_chat_endpoint(websocket : WebSocket):
 
 @app.post("/chat")
 def chat_endpoint(body : ChatBody):
-    s_service, sort_service, l_service = get_services()
-    # Steps -> 1. Get the query from the body
-    #          2. Search the web and find appropriate results
-    search_results = s_service.web_search(body.query)
-            #  3. Sort the responses on the basis of relevance
-    sorted_results = sort_service.sort_sources(body.query, search_results)
-              # 4. Generate the response using LLM(In out Case Gemini)
-    response_generator = l_service.generate_response(body.query, sorted_results)
-    return StreamingResponse(response_generator, media_type="text/plain")
+    try:
+        s_service, sort_service, l_service = get_services()
+        # Steps -> 1. Get the query from the body
+        #          2. Search the web and find appropriate results
+        search_results = s_service.web_search(body.query)
+                #  3. Sort the responses on the basis of relevance
+        sorted_results = sort_service.sort_sources(body.query, search_results)
+                  # 4. Generate the response using LLM(In out Case Gemini)
+        response_generator = l_service.generate_response(body.query, sorted_results)
+        return StreamingResponse(response_generator, media_type="text/plain")
+    except Exception as e:
+        error_details = traceback.format_exc()
+        print(error_details)
+        raise HTTPException(status_code=500, detail=error_details)
