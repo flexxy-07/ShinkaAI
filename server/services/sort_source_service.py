@@ -1,21 +1,21 @@
 from typing import List
 import numpy as np
-import google.generativeai as genai
+from google import genai
 from config import Settings
 
 class SortSourceService:
     def __init__(self):
         settings = Settings()
-        genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
     def sort_sources(self, query: str, search_results: List[dict]):
         relevance_scores = []
 
-        query_embedding_response = genai.embed_content(
-            model="models/embedding-001",
-            content=query
+        query_embedding_response = self.client.models.embed_content(
+            model="text-embedding-004",
+            contents=query
         )
-        query_embedding = query_embedding_response['embedding']
+        query_embedding = query_embedding_response.embeddings[0].values
 
         for result in search_results:
             content = result.get("content")
@@ -24,11 +24,11 @@ class SortSourceService:
                 continue
 
             # We pass the slice to avoid hitting length limits if content is huge
-            res_embedding_response = genai.embed_content(
-                 model="models/embedding-001",
-                 content=content[:10000]
+            res_embedding_response = self.client.models.embed_content(
+                 model="text-embedding-004",
+                 contents=content[:10000]
             )
-            res_embedding = res_embedding_response['embedding']
+            res_embedding = res_embedding_response.embeddings[0].values
 
             similarity = float(np.dot(query_embedding, res_embedding) / (
                 np.linalg.norm(query_embedding) * np.linalg.norm(res_embedding)
