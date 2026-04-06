@@ -2,9 +2,6 @@ import asyncio
 
 from fastapi import FastAPI, WebSocket
 from pydantic_models.chat_body import ChatBody
-from services.llm_service import LLMService
-from services.sort_source_service import SortSourceService
-from services.search_service import SearchService
 
 app = FastAPI()
 
@@ -15,10 +12,13 @@ llm_service = None
 def get_services():
         global search_service, sort_source_service, llm_service
         if search_service is None:
+                from services.search_service import SearchService
                 search_service = SearchService()
         if sort_source_service is None:
+                from services.sort_source_service import SortSourceService
                 sort_source_service = SortSourceService()
         if llm_service is None:
+                from services.llm_service import LLMService
                 llm_service = LLMService()
         return search_service, sort_source_service, llm_service
 
