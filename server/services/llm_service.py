@@ -26,7 +26,7 @@ Please provide a comprehensive, detailed, well-cited response using the above co
 
         try:
             response = self.client.models.generate_content(
-                model="gemini-1.5-flash",  # stable + fast
+                model="gemini-2.5-flash",  # stable + fast
                 contents=full_prompt
             )
 
