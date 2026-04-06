@@ -4,7 +4,6 @@ protobuf==5.29.6
 pydantic==2.12.5
 pydantic_settings==2.13.1
 python-dotenv==1.2.2
-sentence-transformers==5.2.3
 tavily-python==0.7.22
 trafilatura==2.0.0
 uvicorn==0.41.0

@@ -1,16 +1,21 @@
 from typing import List
-from sentence_transformers import SentenceTransformer
 import numpy as np
-
+import google.generativeai as genai
+from config import Settings
 
 class SortSourceService:
     def __init__(self):
-        self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+        settings = Settings()
+        genai.configure(api_key=settings.GEMINI_API_KEY)
 
     def sort_sources(self, query: str, search_results: List[dict]):
         relevance_scores = []
 
-        query_embedding = self.embedding_model.encode(query)
+        query_embedding_response = genai.embed_content(
+            model="models/text-embedding-004",
+            content=query
+        )
+        query_embedding = query_embedding_response['embedding']
 
         for result in search_results:
             content = result.get("content")
@@ -18,7 +23,12 @@ class SortSourceService:
             if not content:
                 continue
 
-            res_embedding = self.embedding_model.encode(content)
+            # We pass the slice to avoid hitting length limits if content is huge
+            res_embedding_response = genai.embed_content(
+                 model="models/text-embedding-004",
+                 content=content[:10000]
+            )
+            res_embedding = res_embedding_response['embedding']
 
             similarity = float(np.dot(query_embedding, res_embedding) / (
                 np.linalg.norm(query_embedding) * np.linalg.norm(res_embedding)
