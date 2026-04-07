@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:shinkaai/services/chat_web_service.dart';
 import 'package:shinkaai/theme/colors.dart';
 import 'package:shinkaai/widgets/answer_section.dart';
 import 'package:shinkaai/widgets/sidebar.dart';
 import 'package:shinkaai/widgets/sources_section.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.question});
   final String question;
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  @override
+  void initState() {
+    super.initState();
+    ChatWebService().chat(widget.question);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,26 +65,31 @@ class ChatPage extends StatelessWidget {
           : null,
       body: Row(
         children: [
-          if (!isMobile) 
-            SideBar(isMobile: false),
+          if (!isMobile) SideBar(isMobile: false),
           Expanded(
             child: SingleChildScrollView(
               child: Center(
                 child: Container(
-                  constraints: BoxConstraints(
-                    maxWidth: isTablet ? 900 : 1100,
-                  ),
+                  constraints: BoxConstraints(maxWidth: isTablet ? 900 : 1100),
                   padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 16.0 : isTablet ? 32.0 : 48.0,
+                    horizontal: isMobile
+                        ? 16.0
+                        : isTablet
+                        ? 32.0
+                        : 48.0,
                     vertical: isMobile ? 16.0 : 32.0,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        question,
+                        widget.question,
                         style: TextStyle(
-                          fontSize: isMobile ? 24 : isTablet ? 28 : 32,
+                          fontSize: isMobile
+                              ? 24
+                              : isTablet
+                              ? 28
+                              : 32,
                           fontWeight: FontWeight.bold,
                           height: 1.3,
                         ),
@@ -86,7 +103,7 @@ class ChatPage extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

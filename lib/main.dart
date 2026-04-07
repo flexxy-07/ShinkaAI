@@ -17,15 +17,11 @@ class MyApp extends StatelessWidget {
       title: 'ShinkaAI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-         scaffoldBackgroundColor: AppColors.background,
-         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.submitButton),
-         textTheme: GoogleFonts.interTextTheme(
-          ThemeData.dark().textTheme
-         )
+        scaffoldBackgroundColor: AppColors.background,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.submitButton),
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
-      home: HomePage()
+      home: HomePage(),
     );
   }
-
-
 }

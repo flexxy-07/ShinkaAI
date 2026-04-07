@@ -65,8 +65,7 @@ class _HomePageState extends State<HomePage> {
           : null,
       body: Row(
         children: [
-          if (!isMobile)
-            SideBar(isMobile: false),
+          if (!isMobile) SideBar(isMobile: false),
           Expanded(
             child: Column(
               children: [

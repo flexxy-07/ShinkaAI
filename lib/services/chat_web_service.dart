@@ -23,7 +23,9 @@ class ChatWebService {
   void connect() {
     // establish WebSocket connection
     // Connecting to the deployed Render backend WS endpoint
-    _socket = WebSocket(Uri.parse('wss://shinkaai-backend.onrender.com/ws/chat'));
+    _socket = WebSocket(
+      Uri.parse('wss://shinkaai-backend.onrender.com/ws/chat'),
+    );
 
     _socket!.messages.listen((message) {
       final data = json.decode(message);

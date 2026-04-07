@@ -50,8 +50,8 @@ class _SearchBarButtonState extends State<SearchBarButton> {
             color: isPressed
                 ? AppColors.proButton.withOpacity(0.8)
                 : isHovered
-                    ? AppColors.proButton
-                    : Colors.transparent,
+                ? AppColors.proButton
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shinkaai/pages/chat_page.dart';
-import 'package:shinkaai/services/chat_web_service.dart';
 import 'package:shinkaai/theme/colors.dart';
 import 'package:shinkaai/widgets/search_bar_button.dart';
 
@@ -31,11 +30,15 @@ class _SearchSectionState extends State<SearchSection> {
     final searchBarWidth = isMobile
         ? screenWidth - 32
         : isTablet
-            ? screenWidth * 0.8
-            : 700.0;
+        ? screenWidth * 0.8
+        : 700.0;
 
     // Responsive font size
-    final titleFontSize = isMobile ? 20.0 : isTablet ? 22.0 : 25.0;
+    final titleFontSize = isMobile
+        ? 20.0
+        : isTablet
+        ? 22.0
+        : 25.0;
 
     return Center(
       child: SingleChildScrollView(
@@ -124,7 +127,6 @@ class _SearchSectionState extends State<SearchSection> {
                             onTap: () {
                               final query = _controller.text.trim();
                               if (query.isNotEmpty) {
-                                ChatWebService().chat(query);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
@@ -140,8 +142,9 @@ class _SearchSectionState extends State<SearchSection> {
                                 borderRadius: BorderRadius.circular(40),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.submitButton
-                                        .withOpacity(0.3),
+                                    color: AppColors.submitButton.withOpacity(
+                                      0.3,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -153,10 +156,10 @@ class _SearchSectionState extends State<SearchSection> {
                                 size: isMobile ? 18 : 16,
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

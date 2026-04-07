@@ -26,8 +26,9 @@ class _SideBarState extends State<SideBar> {
       height: double.infinity,
       color: AppColors.sideNav,
       child: Column(
-        crossAxisAlignment:
-            shouldShowExpanded ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: shouldShowExpanded
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           SizedBox(height: widget.isMobile ? 8 : 20),
           _buildHeader(shouldShowExpanded),
@@ -72,8 +73,9 @@ class _SideBarState extends State<SideBar> {
         vertical: 12,
       ),
       child: Row(
-        mainAxisAlignment:
-            showText ? MainAxisAlignment.start : MainAxisAlignment.center,
+        mainAxisAlignment: showText
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
@@ -97,7 +99,7 @@ class _SideBarState extends State<SideBar> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ]
+          ],
         ],
       ),
     );
@@ -109,10 +111,7 @@ class _SideBarState extends State<SideBar> {
     required bool showText,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: showText ? 12 : 0,
-        vertical: 4,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: showText ? 12 : 0, vertical: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -123,9 +122,7 @@ class _SideBarState extends State<SideBar> {
               horizontal: showText ? 12 : 8,
               vertical: 12,
             ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: Row(
               mainAxisAlignment: showText
                   ? MainAxisAlignment.start
@@ -141,7 +138,7 @@ class _SideBarState extends State<SideBar> {
                       fontSize: 14,
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ),
@@ -180,12 +177,9 @@ class _SideBarState extends State<SideBar> {
                   const SizedBox(width: 12),
                   const Text(
                     "Collapse",
-                    style: TextStyle(
-                      color: AppColors.whiteColor,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: AppColors.whiteColor, fontSize: 14),
                   ),
-                ]
+                ],
               ],
             ),
           ),

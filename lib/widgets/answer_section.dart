@@ -14,26 +14,13 @@ class AnswerSection extends StatefulWidget {
 class _AnswerSectionState extends State<AnswerSection> {
   bool isLoading = true;
   String fullResponse = '''
-  ## Strongest Muscle in the Human Body
-
-The **masseter muscle** is considered the strongest muscle in the human body.
-
-### Location
-- It is located in the **jaw**, on the sides of the face.
-
-### Function
-- The masseter is responsible for **chewing (mastication)**.
-- It helps **close the jaw** when biting or grinding food.
-
-### Strength
-- It can exert a force of up to **200 pounds (≈90 kg) on the molars**.
-
-### Interesting Fact
-- Although the **gluteus maximus** is the largest muscle and the **heart** is the most hardworking muscle, the **masseter is the strongest relative to its size**.
-
-
-
-''';
+  ## Generating response...
+  
+  Please wait while I process your request and gather the information you need.
+  
+  
+  
+  ''';
   @override
   void initState() {
     super.initState();
