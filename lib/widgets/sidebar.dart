@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shinkaai/pages/home_page.dart';
 import 'package:shinkaai/theme/colors.dart';
 
 class SideBar extends StatefulWidget {
@@ -37,11 +38,23 @@ class _SideBarState extends State<SideBar> {
             icon: Icons.add,
             text: "New Chat",
             showText: shouldShowExpanded,
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const HomePage()),
+                (route) => false,
+              );
+            },
           ),
           _buildMenuItem(
             icon: Icons.search,
             text: "Search",
             showText: shouldShowExpanded,
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const HomePage()),
+                (route) => false,
+              );
+            },
           ),
           _buildMenuItem(
             icon: Icons.language,
@@ -109,13 +122,14 @@ class _SideBarState extends State<SideBar> {
     required IconData icon,
     required String text,
     required bool showText,
+    VoidCallback? onTap,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: showText ? 12 : 0, vertical: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: onTap,
           borderRadius: BorderRadius.circular(8),
           child: Container(
             padding: EdgeInsets.symmetric(

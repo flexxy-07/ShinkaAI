@@ -26,15 +26,22 @@ Please provide a comprehensive, detailed, well-cited response using the above co
 
         try:
             response = self.client.models.generate_content(
-                model="gemini-2.5-flash",  # stable + fast
+                model="gemini-2.5-flash-lite",
                 contents=full_prompt
             )
 
-            # Simulate streaming (since new SDK doesn't stream like old one)
-            yield response.text
+
+            if response and response.text:
+                yield response.text
+            else:
+                yield "The AI returned an empty response. Please try a different query."
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
-            print("LLM Error:", str(e))
-            yield f"Something went wrong while generating response. Error details: {str(e)}"
+            error_msg = str(e).lower()
+            if "429" in error_msg or "quota" in error_msg:
+                yield "⚠️ Gemini API Quota Exceeded. Please wait a minute before trying again or switch to a paid API key for higher limits."
+            else:
+                import traceback
+                traceback.print_exc()
+                print("LLM Error:", str(e))
+                yield f"Something went wrong while generating response. Error details: {str(e)}"

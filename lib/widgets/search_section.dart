@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shinkaai/pages/chat_page.dart';
+import 'package:shinkaai/services/chat_web_service.dart';
 import 'package:shinkaai/theme/colors.dart';
 import 'package:shinkaai/widgets/search_bar_button.dart';
 
@@ -127,6 +128,7 @@ class _SearchSectionState extends State<SearchSection> {
                             onTap: () {
                               final query = _controller.text.trim();
                               if (query.isNotEmpty) {
+                                ChatWebService().chat(query);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>

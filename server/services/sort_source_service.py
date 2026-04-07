@@ -9,16 +9,18 @@ class SortSourceService:
         settings = Settings()
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
-    def get_embedding(self, text: str):
+    def get_embeddings(self, texts: List[str]):
+        """Fetched embeddings in batch to minimize API hits and quota usage."""
         try:
+            # text-embedding-004 is more robust and standard for the new SDK
             response = self.client.models.embed_content(
-                model="gemini-embedding-001",
-                contents=text
+                model="text-embedding-004",
+                contents=texts
             )
-            return np.array(response.embeddings[0].values)
+            return [np.array(e.values) for e in response.embeddings]
 
         except Exception as e:
-            print("Embedding Error:", str(e))
+            print(f"Batch Embedding Error: {str(e)}")
             return None
 
     def cosine_similarity(self, a, b):
@@ -34,32 +36,53 @@ class SortSourceService:
         return float(np.dot(a, b) / (norm_a * norm_b))
 
     def sort_sources(self, query: str, search_results: List[dict]):
-        relevance_scores = []
+        if not search_results:
+            return []
 
-        # ✅ Get query embedding once
-        query_embedding = self.get_embedding(query)
+        # ✅ Prepare list for batch embedding (query + all contents)
+        # We include the query as the first item to get everything in ONE request
+        texts_to_embed = [query]
+        valid_results = []
 
         for result in search_results:
             content = result.get("content")
+            if content:
+                # Limit size to avoid token limits per request
+                texts_to_embed.append(content[:5000])
+                valid_results.append(result)
 
-            if not content:
-                continue
+        if len(texts_to_embed) < 2:
+            return search_results
 
-            # ✅ Limit size to avoid API issues
-            content = content[:8000]
+        # ✅ ONE API CALL instead of N + 1
+        print(f"Requesting batch embeddings for {len(texts_to_embed)} items...")
+        all_embeddings = self.get_embeddings(texts_to_embed)
 
-            res_embedding = self.get_embedding(content)
+        # ✅ FALLBACK: If API fails, return original search results (already ranked by search engine)
+        if all_embeddings is None or len(all_embeddings) < 2:
+            print("Falling back to default search engine ranking due to API issue/quota.")
+            return search_results[:10]  # Return top 10 from search engine
 
+        query_embedding = all_embeddings[0]
+        content_embeddings = all_embeddings[1:]
+
+        relevance_scores = []
+        for i, res_embedding in enumerate(content_embeddings):
             similarity = self.cosine_similarity(query_embedding, res_embedding)
-
+            
+            result = valid_results[i]
             result["relevance_score"] = similarity
 
-            # ✅ Slightly better threshold
-            if similarity > 0.35:
+            # ✅ Threshold for relevance
+            if similarity > 0.30:
                 relevance_scores.append(result)
+
+        # If everything filtered out, return top 5 anyway
+        if not relevance_scores:
+            return valid_results[:5]
 
         return sorted(
             relevance_scores,
             key=lambda x: x["relevance_score"],
             reverse=True
-        )
+        )
